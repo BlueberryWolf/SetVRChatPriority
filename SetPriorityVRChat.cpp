@@ -57,7 +57,6 @@ int main() {
     std::cout << "Input: ";
     std::getline(std::cin, input);
 
-    // strstream: 
     std::stringstream strstream(input);
     strstream >> number;
 
