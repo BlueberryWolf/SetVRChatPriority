@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 #include <windows.h>
-#include "colormod\termcolor.hpp"
+#include "termcolor\termcolor.hpp"
 
 // Global variable declaration: 
 // regkey: regkey that is modified
