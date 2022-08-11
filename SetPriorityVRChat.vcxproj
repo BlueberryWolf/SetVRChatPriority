@@ -140,10 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SetPriorityVRChat.cpp" />
+    <ClCompile Include="src\SetPriorityVRChat.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="termcolor.hpp" />
+    <ClInclude Include="src\termcolor\termcolor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
