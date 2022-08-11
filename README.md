@@ -6,7 +6,7 @@ SetVRChatPriority is a program you run once before VRChat, and it permanently se
 ![Preview Image](https://cdn.discordapp.com/attachments/924219614257348650/1006908690349170698/unknown.png)
 
 # Simple Usage
-Download the [latest release](https://github.com/BlueberryWolf/SetVRChatPriority/releases/latest)
+Download the [latest release](https://github.com/BlueberryWolf/SetVRChatPriority/releases/latest).
 Close VRChat, and open SetVRChatPriority.
 Type 3, then press enter.
 
