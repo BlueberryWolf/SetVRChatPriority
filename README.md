@@ -10,4 +10,4 @@ SetVRChatPriority sets a registry key `HKLM\SOFTWARE\Microsoft\Windows NT\Curren
 
 SetVRChatPriority **must be ran before VRChat is started.**
 
-Latest Download: [https://github.com/BlueberryWolf/SetVRChatPriority/releases/latest]
+Latest Download: https://github.com/BlueberryWolf/SetVRChatPriority/releases/latest
