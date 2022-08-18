@@ -7,7 +7,9 @@ SetVRChatPriority is a program you run once before VRChat, and it permanently se
 
 # Simple Usage
 Download the [latest release](https://github.com/BlueberryWolf/SetVRChatPriority/releases/latest).
+
 Close VRChat, and open SetVRChatPriority.
+
 Type 3, then press enter.
 
 This is a one time fix, you don't need to run this every time you open VRChat.
