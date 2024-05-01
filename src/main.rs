@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Kawaxte
-// 
+//
 // This file is part of vrc-priority-rs.
-// 
+//
 // vrc-priority-rs is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // vrc-priority-rs is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with vrc-priority-rs.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -60,10 +60,10 @@ fn main() {
         // Take a break for a second.
         thread::sleep(Duration::from_millis(1000));
 
-        eprintln!("Please enter a number between 1 and 6.");
+        eprint!("Please enter a number between 1 and 6.");
 
         return;
     }
 
-    println!("VRChat priority has been set to {input}");
+    print!("VRChat priority has been set to {input}");
 }
