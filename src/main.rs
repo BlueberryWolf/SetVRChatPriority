@@ -65,5 +65,5 @@ fn main() {
         return;
     }
 
-    print!("VRChat priority has been set to {input}");
+    print!("VRChat priority has been set to {input}.");
 }
