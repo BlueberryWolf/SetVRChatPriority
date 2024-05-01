@@ -26,14 +26,14 @@ use std::{
 fn main() {
     // "Access is denied. (os error 5)" without said privileges.
     if !utils::is_running_as_admin() {
-        eprintln!("Please run this program with administrator privileges.");
+        eprint!("Please run this program with administrator privileges.");
 
         return;
     }
 
     // Changing priority during runtime can cause instability.
     if utils::is_vrchat_running() {
-        eprintln!("Please close VRChat before running this program again.");
+        eprint!("Please close VRChat before running this program again.");
 
         return;
     }
