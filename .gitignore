@@ -1,35 +1,13 @@
-# Prerequisites
-*.d
+# macOS
+.DS_Store
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Rust
+/target
+Cargo.lock
 
-# Precompiled Headers
-*.gch
-*.pch
+### IntelliJ IDEA ###
+.idea/
+.idea_modules/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Directories
-x64/
+### VSCode ###
+.vscode/
