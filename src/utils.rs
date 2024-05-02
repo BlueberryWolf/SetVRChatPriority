@@ -21,76 +21,100 @@ use std::{
     process::Command,
 };
 
-use nu_ansi_term::Color;
+use crossterm::style::Stylize;
 use winreg::{enums::*, RegKey};
 
-const EXECUTABLE: &str = "VRChat";
+use crate::types::Throwable;
 
-pub(super) fn is_running_as_admin() -> bool {
-    let session = Command::new("net")
-        .arg("session")
-        .output()
-        .expect("Failed to execute command");
-    session.status.success()
+const VRCHAT_EXE: &str = "VRChat";
+
+pub(super) enum Priority {
+    High = 3,
+    AboveNormal = 6,
+    Normal = 2,
+    BelowNormal = 5,
+    Low = 1,
 }
 
-pub(super) fn is_vrchat_running() -> bool {
-    let tasklist = Command::new("tasklist")
-        .output()
-        .expect("Failed to execute command");
-
-    let vrchat_exe = String::from_utf8_lossy(&tasklist.stdout);
-    vrchat_exe.contains(EXECUTABLE)
+impl ToString for Priority {
+    fn to_string(&self) -> String {
+        match self {
+            Self::High => format!("High"),
+            Self::AboveNormal => format!("Above normal"),
+            Self::Normal => format!("Normal"),
+            Self::BelowNormal => format!("Below normal"),
+            Self::Low => format!("Low"),
+        }
+    }
 }
 
-pub(super) fn build_app_info() {
-    let stdout = io::stdout();
+impl From<u32> for Priority {
+    fn from(priority: u32) -> Self {
+        match priority {
+            3 => Self::High,
+            6 => Self::AboveNormal,
+            2 => Self::Normal,
+            5 => Self::BelowNormal,
+            1 => Self::Low,
+            _ => panic!("Unknown priority"),
+        }
+    }
+}
 
-    let mut handle = stdout.lock();
+pub(super) fn is_running_as_admin() -> Throwable<bool> {
+    let session = Command::new("net").arg("session").output()?;
+    Ok(session.status.success())
+}
+
+pub(super) fn is_vrchat_running() -> Throwable<bool> {
+    let tasklist = Command::new("tasklist").output()?;
+
+    let executable = String::from_utf8_lossy(&tasklist.stdout);
+    Ok(executable.contains(VRCHAT_EXE))
+}
+
+pub(super) fn build_app_info() -> Throwable<()> {
+    let mut stdout = io::stdout();
 
     writeln!(
-        handle,
-        "{}\n{} {}\n{}\n{}\n",
-        Color::LightBlue.paint(
-            "Easy Anti-Cheat prevents you from setting the priority of VRChat while it is running."
-        ),
-        Color::LightBlue.paint("This program allows you to set the priority of VRChat"),
-        Color::LightBlue.underline().paint("on startup."),
-        Color::LightBlue.paint("By doing so, you can bypass this restriction completely."),
-        Color::Blue.paint("Note: Make sure to run this program before launching VRChat.")
-    )
-    .expect("Failed to write to stdout");
+        stdout,
+        "{}\n{} {}\n{}\n{}",
+        "Easy Anti-Cheat prevents you from setting the priority of VRChat while it is running."
+            .blue(),
+        "This program allows you to set the priority of VRChat".blue(),
+        "on startup.".blue().underlined(),
+        "By doing so, you can bypass this restriction completely.".blue(),
+        "Note: Make sure to run this program before launching VRChat.".dark_blue()
+    )?;
     writeln!(
-        handle,
-        "{}\n{}\n{}\n{}\n{}\n{}\n\n{}\n",
-        Color::Yellow.paint("Set VRChat priority:"),
-        Color::Yellow.paint("3: High (recommended)"),
-        Color::Yellow.paint("6: Above normal"),
-        Color::Yellow.paint("2: Normal"),
-        Color::Yellow.paint("5: Below normal"),
-        Color::Yellow.paint("1: Low"),
-        Color::Red.paint("'Realtime' priority is not possible due to Windows limitations and is not recommended for general CPU stability.")
-    ).expect("Failed to write to stdout");
+        stdout,
+        "\n{}\n{}\n{}\n{}\n{}\n{}\n\n{}",
+        "Set VRChat priority:".yellow(),
+        "3: High (recommended)".yellow(),
+        "6: Above normal".yellow(),
+        "2: Normal".yellow(),
+        "5: Below normal".yellow(),
+        "1: Low".yellow(),
+        "'Realtime' priority is not possible due to Windows limitations and is not recommended for general CPU stability.".red()
+    )?;
+
+    Ok(())
 }
 
-pub(super) fn set_cpu_priority_class_for_vrchat(priority: u32) {
+pub(super) fn set_cpu_priority_class_for_vrchat(priority: u32) -> Throwable<()> {
     let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-    let current_version = hklm
-        .open_subkey_with_flags(
-            Path::new("SOFTWARE")
-                .join("Microsoft")
-                .join("Windows NT")
-                .join("CurrentVersion"),
-            KEY_ALL_ACCESS,
-        )
-        .expect("Failed to open 'CurrentVersion' key");
-    let image_file_execution_options = current_version
-        .open_subkey_with_flags("Image File Execution Options", KEY_ALL_ACCESS)
-        .expect("Failed to open 'Image File Execution Options' key");
+    let current_version = hklm.open_subkey_with_flags(
+        Path::new("SOFTWARE")
+            .join("Microsoft")
+            .join("Windows NT")
+            .join("CurrentVersion"),
+        KEY_ALL_ACCESS,
+    )?;
+    let image_file_execution_options =
+        current_version.open_subkey_with_flags("Image File Execution Options", KEY_ALL_ACCESS)?;
 
     let vrchat_exe = image_file_execution_options
-        .create_subkey_with_flags(format!("{EXECUTABLE}.exe"), KEY_ALL_ACCESS)
-        .expect("Failed to create subkey for VRChat");
+        .create_subkey_with_flags(format!("{VRCHAT_EXE}.exe"), KEY_ALL_ACCESS)?;
     let vrchat_exe_perf_options = match vrchat_exe
         .0
         .open_subkey_with_flags("PerfOptions", KEY_ALL_ACCESS)
@@ -99,12 +123,9 @@ pub(super) fn set_cpu_priority_class_for_vrchat(priority: u32) {
         Err(_) => {
             vrchat_exe
                 .0
-                .create_subkey_with_flags("PerfOptions", KEY_ALL_ACCESS)
-                .expect("Failed to create 'PerfOptions' key")
+                .create_subkey_with_flags("PerfOptions", KEY_ALL_ACCESS)?
                 .0
         }
     };
-    vrchat_exe_perf_options
-        .set_value("CpuPriorityClass", &priority)
-        .expect("Failed to set 'CpuPriorityClass' for VRChat");
+    Ok(vrchat_exe_perf_options.set_value("CpuPriorityClass", &priority)?)
 }
