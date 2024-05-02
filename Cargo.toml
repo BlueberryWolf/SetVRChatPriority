@@ -8,7 +8,12 @@ readme = "README.md"
 description = "Bypass Easy Anti-Cheat's forbiddance on altering VRChat's priority. (in Windows)"
 repository = "https://github.com/Kawaxte/vrc-priority-rs"
 license-file = "LICENSE"
+build = "build.rs"
 
 [dependencies]
-nu-ansi-term = "0.50.0"
+crossterm = "0.27.0"
 winreg = "0.52.0"
+
+[build-dependencies]
+dotenvy = "0.15.7"
+tauri-winres = "0.1.1"
