@@ -26,17 +26,7 @@
 [![gh_release](https://img.shields.io/github/v/release/Kawaxte/vrc-priority-rs?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/vrc-priority-rs/releases/latest)
 [![gh_release_pre](https://img.shields.io/github/v/release/Kawaxte/vrc-priority-rs?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/vrc-priority-rs/releases)
 
-VRChat not too long ago added Easy Anti-Cheat, which prevents you from changing the priority of VRChat.exe through Task Manager. Now, you can change the priority of VRChat.exe with this program, and you don't even have to run it twice!
-
-You run it once, and a permanent priority change is made to VRChat.exe. You can change the priority to any of the following:
-
-- 1. High
-- 2. Above Normal
-- 3. Normal
-- 4. Below Normal
-- 5. Low
-
-You might wonder why `Realtime` isn't included. This is because `Realtime` is a dangerous priority to set, and can cause instability.
+VRChat not too long ago added Easy Anti-Cheat, which prevents you from changing the priority of VRChat.exe through Task Manager. All *you* have to do is run it once and it will permanently set the priority of VRChat.exe to what you chose. 簡単簡単！
 
 ## Building from Source
 
