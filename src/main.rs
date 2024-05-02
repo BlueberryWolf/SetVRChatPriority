@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with vrc-priority-rs.  If not, see <https://www.gnu.org/licenses/>.
 
+mod types;
 mod utils;
 
 use std::{
@@ -23,47 +24,48 @@ use std::{
     time::Duration,
 };
 
-fn main() {
-    // "Access is denied. (os error 5)" without said privileges.
-    if !utils::is_running_as_admin() {
+use types::Throwable;
+
+use crate::utils::Priority;
+
+fn main() -> Throwable<()> {
+    if !utils::is_running_as_admin()? {
         eprint!("Please run this program with administrator privileges.");
 
-        return;
+        return Ok(());
     }
-
-    // Changing priority during runtime can cause instability.
-    if utils::is_vrchat_running() {
+    if utils::is_vrchat_running()? {
         eprint!("Please close VRChat before running this program again.");
 
-        return;
+        return Ok(());
     }
 
-    let mut input = String::new();
+    utils::build_app_info()?;
 
-    utils::build_app_info();
+    loop {
+        let mut input = format!("");
 
-    print!("Input: ");
+        print!("\nInput: ");
 
-    // Ensure prompt is displayed before reading input.
-    io::stdout().flush().expect("Failed to flush stdout");
+        io::stdout().flush()?;
+        io::stdin().read_line(&mut input)?;
 
-    // So, what are you going to enter?
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+        match input.trim().parse::<u32>() {
+            Ok(number) if number >= 1 && number <= 6 => {
+                utils::set_cpu_priority_class_for_vrchat(number)?;
+                println!(
+                    "VRChat priority has been set to {:?}.",
+                    Priority::from(number).to_string()
+                );
 
-    // Are you trying to enter words instead of numbers?
-    let priority_num = input.trim().parse::<u32>().expect("Failed to parse input");
-    if priority_num >= 1 && priority_num <= 6 {
-        utils::set_cpu_priority_class_for_vrchat(priority_num);
-    } else {
-        // Take a break for a second.
-        thread::sleep(Duration::from_millis(1000));
-
-        eprint!("Please enter a number between 1 and 6.");
-
-        return;
+                break;
+            }
+            _ => {
+                thread::sleep(Duration::from_millis(1000));
+                eprintln!("{:?} is not a valid priority level.", input.trim());
+            }
+        }
     }
 
-    print!("VRChat priority has been set to {input}.");
+    Ok(())
 }
